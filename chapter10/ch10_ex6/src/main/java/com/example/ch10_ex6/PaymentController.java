@@ -1,4 +1,4 @@
-package com.example.ch10_ex5;
+package com.example.ch10_ex6;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +14,18 @@ public class PaymentController {
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<PaymentDetails> processPayment(){
+    public ResponseEntity<?> processPayment(){
+        try{
             PaymentDetails paymentDetails = paymentService.processPayment();
             return ResponseEntity
                     .status(HttpStatus.ACCEPTED)
                     .body(paymentDetails);
+        } catch (NotEnoughMoneyException e){
+            ErrorDetails errorDetails = new ErrorDetails();
+            errorDetails.setMessage("Not enough money to make the payment");
+            return ResponseEntity
+                    .badRequest()
+                    .body(errorDetails);
+        }
     }
 }
